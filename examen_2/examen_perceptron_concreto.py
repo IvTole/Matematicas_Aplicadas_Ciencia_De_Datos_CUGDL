@@ -161,13 +161,12 @@ def _(cost_regression_step, mo):
     # TODO 4: calcula los gradientes y aplica W - learning_rate * dW a W
     # Aplica la misma regla a b. Guarda los resultados en parameters_updated.
     grads_step = ...
-    W_updated = ...
-    b_updated = ...
-    parameters_updated = {"W": W_updated, "b": b_updated}
+    parameters_updated = ...
 
-    mo.stop(any(value is ... for value in (grads_step, W_updated, b_updated)))
+    mo.stop(any(value is ... for value in (grads_step, parameters_updated["W"], parameters_updated["b"])))
 
     # TODO 5: vuelve a calcular el costo con los parámetros actualizados
+    y_hat_updated = ...
     cost_updated = ...
 
     print("Costo antes de actualizar:", cost_regression_step)
@@ -273,14 +272,14 @@ def _(np):
         Argumentos:
         X -- conjunto de datos de entrada con dimensión (tamaño de entrada, número de ejemplos)
         Y -- etiquetas (valores objetivo) con dimensión (tamaño de salida, número de ejemplos)
-    
+
         Retorna:
         n_x -- tamaño de la capa de entrada
         n_y -- tamaño de la capa de salida
         """
         n_x = X.shape[0]
         n_y = Y.shape[0]
-    
+
         return (n_x, n_y)
 
     def initialize_parameters(n_x, n_y):
@@ -296,18 +295,18 @@ def _(np):
             W -- matriz de pesos de dimensión (n_y, n_x)
             b -- vector de sesgos de dimensión (n_y, 1)
         """
-    
+
         # Inicialización aleatoria pequeña para evitar simetrías
         W = np.random.randn(n_y, n_x) * 0.01
-    
+
         # Inicialización del sesgo en cero
         b = np.zeros((n_y, 1))
-    
+
         parameters = {
             "W": W,
             "b": b
         }
-    
+
         return parameters
 
     def forward_propagation_regression(X, parameters):
@@ -321,13 +320,13 @@ def _(np):
         Retorna:
         Y_hat -- salida del modelo (predicciones)
         """
-    
+
         W = parameters["W"]
         b = parameters["b"]
-    
+
         # Propagación hacia adelante: cálculo de Z
         Z = np.matmul(W, X) + b
-    
+
         # En este caso (regresión lineal), la salida es identidad
         Y_hat = Z
 
@@ -344,13 +343,13 @@ def _(np):
         Retorna:
         Y_hat -- salida del modelo (predicciones)
         """
-    
+
         W = parameters["W"]
         b = parameters["b"]
-    
+
         # Propagación hacia adelante: cálculo de Z
         Z = np.matmul(W, X) + b
-    
+
         # En este caso (regresión lineal), la salida es identidad
         A = sigmoid(Z)
 
@@ -363,17 +362,17 @@ def _(np):
         Argumentos:
         Y_hat -- salida de la red neuronal de dimensión (n_y, número de ejemplos)
         Y -- valores reales (etiquetas) de dimensión (n_y, número de ejemplos)
-    
+
         Retorna:
         cost -- valor de la función de costo, escalado por 1/(2*m)
         """
-    
+
         # Número de ejemplos
         m = Y_hat.shape[1]
 
         # Cálculo de la función de costo
         cost = np.sum((Y_hat - Y)**2) / (2 * m)
-    
+
         return cost
 
     def compute_cost_bce(A, Y):
@@ -383,11 +382,11 @@ def _(np):
         Argumentos:
         Y_hat -- salida de la red neuronal de dimensión (n_y, número de ejemplos)
         Y -- valores reales (etiquetas) de dimensión (n_y, número de ejemplos)
-    
+
         Retorna:
         cost -- valor de la función de costo, escalado por 1/(2*m)
         """
-    
+
         # Número de ejemplos
         m = Y.shape[1]
 
@@ -399,7 +398,7 @@ def _(np):
         )
 
         cost = 1 / m * np.sum(logprobs)
-    
+
         return cost
 
     def backward_propagation_regression(Y_hat, X, Y):
@@ -410,23 +409,23 @@ def _(np):
         Y_hat -- salida de la red neuronal de dimensión (n_y, número de ejemplos)
         X -- datos de entrada de dimensión (n_x, número de ejemplos)
         Y -- valores reales (etiquetas) de dimensión (n_y, número de ejemplos)
-    
+
         Retorna:
         grads -- diccionario de Python que contiene los gradientes respecto a los parámetros
         """
-    
+
         m = X.shape[1]
-    
+
         # Propagación hacia atrás: cálculo de derivadas parciales
         dZ = Y_hat - Y
         dW = (1 / m) * np.dot(dZ, X.T)
         db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
-    
+
         grads = {
             "dW": dW,
             "db": db
         }
-    
+
         return grads
 
     def backward_propagation_classification(A, X, Y):
@@ -437,13 +436,13 @@ def _(np):
         Y_hat -- salida de la red neuronal de dimensión (n_y, número de ejemplos)
         X -- datos de entrada de dimensión (n_x, número de ejemplos)
         Y -- valores reales (etiquetas) de dimensión (n_y, número de ejemplos)
-    
+
         Retorna:
         grads -- diccionario de Python que contiene los gradientes respecto a los parámetros
         """
-    
+
         m = X.shape[1]
-    
+
         # Error del modelo
         dZ = A - Y
 
@@ -452,12 +451,12 @@ def _(np):
 
         # Gradiente respecto al sesgo
         db = 1 / m * np.sum(dZ, axis=1, keepdims=True)
-    
+
         grads = {
             "dW": dW,
             "db": db
         }
-    
+
         return grads
 
     def update_parameters(parameters, grads, learning_rate=1.2):
@@ -472,24 +471,24 @@ def _(np):
         Retorna:
         parameters -- diccionario con los parámetros actualizados
         """
-    
+
         # Extraer parámetros
         W = parameters["W"]
         b = parameters["b"]
-    
+
         # Extraer gradientes
         dW = grads["dW"]
         db = grads["db"]
-    
+
         # Regla de actualización (gradient descent)
         W = W - learning_rate * dW
         b = b - learning_rate * db
-    
+
         parameters = {
             "W": W,
             "b": b
         }
-    
+
         return parameters
 
     def nn_model_regression(X, Y, num_iterations=10, learning_rate=1.2, print_cost=False):
@@ -506,31 +505,31 @@ def _(np):
         Retorna:
         parameters -- parámetros aprendidos por el modelo. Posteriormente pueden usarse para hacer predicciones.
         """
-    
+
         n_x = layer_sizes(X, Y)[0]
         n_y = layer_sizes(X, Y)[1]
-    
+
         parameters = initialize_parameters(n_x, n_y)
-    
+
         # Ciclo de entrenamiento
         for i in range(0, num_iterations):
-         
+
             # Propagación hacia adelante.
             # Entradas: X, parameters. Salida: Y_hat.
             Y_hat = forward_propagation_regression(X, parameters)
-        
+
             # Función de costo.
             # Entradas: Y_hat, Y. Salida: cost.
             cost = compute_cost_mse(Y_hat, Y)
-        
+
             # Propagación hacia atrás.
             # Entradas: Y_hat, X, Y. Salida: grads.
             grads = backward_propagation_regression(Y_hat, X, Y)
-    
+
             # Actualización de parámetros mediante descenso del gradiente.
             # Entradas: parameters, grads, learning_rate. Salida: parameters.
             parameters = update_parameters(parameters, grads, learning_rate)
-        
+
             # Imprimir el costo en cada iteración
             if print_cost:
                 print("Costo después de la iteración %i: %f" % (i, cost))
