@@ -221,6 +221,8 @@ def _(mo):
 
     Calcula $R^2$ y MSE para ambos modelos de regresión. Para clasificación, calcula *accuracy* y F1 para ambos modelos. Completa las dos tablas.
 
+    **Nota**: es posible que requieras aplicar una operación transpuesta `array.T` a las predicciones para que coincidan las dimensiones de las matrices.
+
     **Pregunta 6.** ¿Por qué la regresión lineal y la regresión logística pueden verse como casos particulares de un perceptrón de una capa? Explica qué comparten en cada comparación y por qué sus métricas podrían diferir.
     """)
     return
